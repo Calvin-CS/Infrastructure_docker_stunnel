@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: katzstunnel-{{ default "staging" .Release.Namespace }}
+  namespace: {{ default "staging" .Release.Namespace }}
+  labels:
+    tier: backend
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: katzstunnel{{- if ne .Release.Namespace "production" }}-{{ default "staging" .Release.Namespace }}{{- end }}.{{ .Values.dns.name }}
+    service.beta.kubernetes.io/azure-dns-label-name: calvincs-katzstunnel{{- if ne .Release.Namespace "production" }}-{{ default "staging" .Release.Namespace }}{{- end }}
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 2049
+    targetPort: 2049
+    name: katzstunnel
+    protocol: TCP
+  selector:
+    app: katzstunnel-{{ default "staging" .Release.Namespace }}

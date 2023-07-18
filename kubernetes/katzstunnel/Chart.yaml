@@ -1,0 +1,4 @@
+apiVersion: v2
+name: katzstunnel
+description: A Helm chart for Kubernetes deployment of tstrohmeier/stunnel-client
+version: 0.1.0

@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: katzstunnel-config-{{ default "staging" .Release.Namespace }}
+  labels:
+    tier: backend
+  annotations:
+    "builddate": "20230718-1"
+data:
+  ACCEPT: "2049"
+  CONNECT: cs-azure-gw.cs.calvin.edu:20490

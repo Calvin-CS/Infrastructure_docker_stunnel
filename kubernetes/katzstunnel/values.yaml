@@ -1,0 +1,10 @@
+image:
+  name: tstrohmeier/stunnel-client
+  registry: registry-1.docker.io
+  tag: latest
+dns:
+  name: cs.calvin.edu
+rollingUpdate:
+  enabled: true
+  maxSurge: "100%"
+  maxUnavailable: "100%"

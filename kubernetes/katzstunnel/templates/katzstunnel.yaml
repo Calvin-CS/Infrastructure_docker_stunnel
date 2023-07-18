@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katzstunnel-{{ default "staging" .Release.Namespace }}
+  namespace: {{ default "staging" .Release.Namespace }}
+  labels:
+    app: katzstunnel-{{ default "staging" .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: katzstunnel-{{ default "staging" .Release.Namespace }}
+      tier: backend
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/katzstunnel-configmap.yaml") . | sha256sum }}
+        releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
+      labels:
+        app: katzstunnel-{{ default "staging" .Release.Namespace }}
+        tier: backend
+    spec:
+      {{ if ne .Release.Namespace "production" }}hostname: katzstunnel-{{ .Release.Namespace }}{{- else }}hostname: katzstunnel{{- end }}
+      dnsPolicy: Default
+      dnsConfig:
+        searches:
+          - cs.calvin.edu
+      containers:
+      - name: katzstunnel-{{ default "staging" .Release.Namespace }}
+        image: {{ .Values.image.name }}:{{ default "latest" .Values.image.tag }}
+        envFrom:
+        - configMapRef:
+            name: katzstunnel-config-{{ default "staging" .Release.Namespace }}
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+            - SYS_MODULE
+            - SYS_ADMIN
+        ports:
+        - containerPort: 2049
+          protocol: TCP
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "500m" #0.5 CPU
+          limits:
+            memory: "512Mi"
+            cpu: "750m" #0.75 CPU
+---
