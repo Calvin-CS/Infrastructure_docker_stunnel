@@ -6,7 +6,7 @@ metadata:
   labels:
     app: katzstunnel-{{ default "staging" .Release.Namespace }}
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: katzstunnel-{{ default "staging" .Release.Namespace }}
@@ -42,9 +42,9 @@ spec:
           protocol: TCP
         resources:
           requests:
-            memory: "200Mi"
+            memory: "400Mi"
             cpu: "500m" #0.5 CPU
           limits:
-            memory: "512Mi"
+            memory: "1024Mi"
             cpu: "750m" #0.75 CPU
 ---
