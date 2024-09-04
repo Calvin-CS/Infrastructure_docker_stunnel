@@ -20,6 +20,8 @@ spec:
         app: katzstunnel-{{ default "staging" .Release.Namespace }}
         tier: backend
     spec:
+      nodeSelector:
+        CSInfrastructure: "true"
       {{ if ne .Release.Namespace "production" }}hostname: katzstunnel-{{ .Release.Namespace }}{{- else }}hostname: katzstunnel{{- end }}
       dnsPolicy: Default
       dnsConfig:
